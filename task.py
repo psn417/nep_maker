@@ -60,10 +60,12 @@ class gpumd_task(Task):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.seperate_dir = True
+        self.atoms = kwargs["atoms"]
 
     def prepare_job(self):
         with open("run.in", "w") as f:
             f.write(self.input)
+        write("model.xyz", self.atoms)
 
 
 class nep_task(Task):
