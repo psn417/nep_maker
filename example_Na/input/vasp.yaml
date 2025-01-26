@@ -1,0 +1,14 @@
+pp: pbe
+ibrion: -1
+ismear: 0
+isym: 0
+sigma: 0.02
+algo: normal
+encut: 101.968
+ncore: 4
+kspacing: 0.5
+lcharg: False
+lwave: False
+lreal: Auto
+setups:  
+  Na:

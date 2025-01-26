@@ -1,10 +1,10 @@
 from time import sleep
-from task import Task
+from .task import Task
 
 
 class Pool:
     def __init__(
-        self, tasks: list[Task], pool_size: int = 9999, sleep_time: float = 60
+        self, tasks: list[Task], pool_size: int = 9999, sleep_time: float = 30
     ):
         self.tasks_to_do = tasks
         self.pool_size = pool_size
