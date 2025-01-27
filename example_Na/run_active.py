@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Apr 27 10:18:20 2021
-
-@author: PSN
-"""
-
 from ase.io import read
 from nep_maker.active_learning import ActiveLearning
 
@@ -28,5 +21,5 @@ atoms = read("Na.xyz")
 a = ActiveLearning()
 a.max_structures_per_iteration = 50
 a.input_gpumd = [get_gpumd_input(0, T) for T in range(300, 501, 50)]
-a.atoms_gpumd = [atoms]*len(a.input_gpumd )
+a.atoms_gpumd = [atoms] * len(a.input_gpumd)
 a.run()

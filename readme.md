@@ -1,91 +1,69 @@
-# Building NEP automatically
+# Introduction
 
-This python package helps you build NEP with active learning technique. It use the same strategy with **MTP** [J. Chem. Phys. 159, 084112 (2023)] and **ACE** [Phys. Rev. Materials 7, 043801 (2023)].
+This Python package facilitates the construction of NEP using active learning techniques. It employs the same strategies as **MTP** [J. Chem. Phys. 159, 084112 (2023)] and **ACE** [Phys. Rev. Materials 7, 043801 (2023)].
 
-It performs active learning by submitting and monitoring jobs automatically. It uses the following procedure:
+The package automates active learning by submitting and monitoring jobs. The workflow is as follows:
 
-### 1. Caculating energy, force and virial by *ab initio* calculations.
+### 1. Calculating Energy, Force, and Virial via *Ab Initio* Calculations
 
-If it is the first iteration, and you don't have any structures, you can build some simple structures. For example, you can rattle the crystal structure to get an initial training set.
+If this is the first iteration and no structures are available, you can generate simple structures. For instance, you can perturb a crystal structure to create an initial training set.
 
-If you already have a `train.xyz` (with energy and force) before the first iteration, this step will be skipped.
+If a `train.xyz` file (containing energy and force data) already exists before the first iteration, this step will be skipped.
 
-Note that the inital training set cannot be too small for selecting the active set. If you use a NEP with a 30\*30 neural network, you need around 1000 local environments (10 structures with 100 atoms). If your NEP have *N* elements, then you need *N*\*1000 local environments for each element type.
+**Note:** The initial training set should not be too small for active set selection. For a NEP with a 30×30 neural network, approximately 1000 local environments (e.g., 10 structures with 100 atoms each) are required. If your NEP includes *N* elements, you will need *N* × 1000 local environments for each element type.
 
-### 2. Training and NEP.
+### 2. Selecting an Active Set
 
-Training an NEP with the structures in step-1. If you provide a `nep.txt`, this step will be skipped in the first iteration.
+The `MaxVol` algorithm is used to select an active set, which consists of reference environments for calculating the extrapolation level.
 
-### 3. Selecting an active set.
+### 3. Training the NEP
 
-Using `MaxVol` algorithem to select an active set. An active set is a set of reference environments to calcuting the extrapolation level.
+Train the NEP using the structures from Step 1. If a `nep.txt` file is provided, this step will be skipped in the first iteration.
 
-### 4. Performing MD and get new structures. If there are no strucatures, the loop will be over.
+### 4. Performing Molecular Dynamics (MD) to Generate New Structures
 
-Running GPUMD to atively selecting new structures based on extraplolation level cutoff. You can run multiple MD simulations at different conditions to explore faster.
+Run GPUMD to actively select new structures based on an extrapolation level cutoff. If no structures are generated, the loop terminates. You can run multiple MD simulations under different conditions to accelerate exploration.
 
-### 5. Selecting structures to add to the training set.
+### 5. Selecting Structures to Add to the Training Set
 
-The structures in step-4 have large extrapolation level, but there is no guarantee that they are diverse enough. So we perform another MaxVol selection to get the best structures.
+While the structures from Step 4 have high extrapolation levels, they may lack diversity. Therefore, another `MaxVol` selection is performed to identify the most representative structures.
+
+---
 
 # Installation
 
-### 三级标题
+### Dependencies
 
-#### 四级标题
+First, install the required dependencies, including `PyNEP` and `CuPy`. Refer to [this page](https://github.com/psn417/nep_active) for detailed instructions.
 
-##### 五级标题
+### Installing the Package
 
-###### 六级标题
+1. For Bash users:
+   - Open `~/.bashrc` in a text editor.
+   - Add the following line at the end of the file:
+     ```bash
+     export PYTHONPATH=$PYTHONPATH:/path/to/my_packages
+     ```
+   - Save the file and reload the shell configuration:
+     ```bash
+     source ~/.bashrc
+     ```
 
----
+2. Place the `nep_maker` package into the `my_packages` directory to make it accessible to Python.
 
-## 文本格式
-
-- **加粗文本**：`**加粗文本**`
-- *斜体文本*：`*斜体文本*`
-- ~~删除线~~：`~~删除线~~`
-- `行内代码`：`` `行内代码` ``
-- 高亮文本：`==高亮文本==`（部分 Markdown 解析器支持）
-
----
-
-## 列表
-
-### 无序列表
-
-- 项目 1
-- 项目 2
-  - 子项目 2.1
-  - 子项目 2.2
-- 项目 3
-
-### 有序列表
-
-1. 第一项
-2. 第二项
-   1. 子项 2.1
-   2. 子项 2.2
-3. 第三项
+2. Verify the installation by opening Python and typing `import nep_maker`. If the import is successful, the package is installed correctly.
 
 ---
 
-## 链接和图片
+# Input Files
 
-- [普通链接](https://www.example.com)：`[普通链接](https://www.example.com)`
-- [带标题的链接](https://www.example.com "标题")：`[带标题的链接](https://www.example.com "标题")`
-- 图片：`![替代文本](https://www.example.com/image.png "图片标题")`
+Prepare the following input files:
 
----
+1. **`init_structures.xyz`**: Structures used to train the NEP in the first iteration.
+2. **(Optional) `train.xyz` and `nep.txt`**: If you already have an NEP, you can perform active learning based on it.
+3. **`run.in`**: Specifies how to train the NEP.
+4. **Job Scripts**: Define how to run NEP, GPUMD, and other tasks. Examples are provided for `LSF`; modify them according to your job system.
+5. **`vasp.yaml`**: Specifies VASP parameters and pseudopotentials. Include the location of pseudopotentials. Refer to the [ASE documentation](https://wiki.fysik.dtu.dk/ase/ase/calculators/vasp.html#module-ase.calculators.vasp) for more details.
+6. **`run_active.py`**: The main script for the active learning process. Only one CPU core is needed.
 
-## 代码块
-
-### 行内代码
-
-这是一个 `print("Hello, World!")` 的示例。
-
-### 代码块
-
-```python
-def hello_world():
-    print("Hello, World!")
+An example folder, `example_Na`, is provided with all necessary files.
