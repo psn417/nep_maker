@@ -38,6 +38,11 @@ First, install the required dependencies, including `PyNEP` and `CuPy`. Refer to
 
 ### Installing the Package
 
+1. Clone the code by running:
+   ```bash
+   git clone --recursive https://github.com/psn417/nep_maker.git
+   ```
+
 1. For Bash users:
    - Open `~/.bashrc` in a text editor.
    - Add the following line at the end of the file:
@@ -64,6 +69,7 @@ Prepare the following input files:
 3. **`run.in`**: Specifies how to train the NEP.
 4. **Job Scripts**: Define how to run NEP, GPUMD, and other tasks. Examples are provided for `LSF`; modify them according to your job system.
 5. **`vasp.yaml`**: Specifies VASP parameters and pseudopotentials. Include the location of pseudopotentials. Refer to the [ASE documentation](https://wiki.fysik.dtu.dk/ase/ase/calculators/vasp.html#module-ase.calculators.vasp) for more details.
-6. **`run_active.py`**: The main script for the active learning process. Only one CPU core is needed.
+6. **`run_active.py`**: The main script for the active learning process. Only one CPU core is needed for it.
+7. **`submit_command.sh`**: Specifies how to submit your jobs. For `LSF`, it is `bsub < job.sh`. For `slurm`, it is `sbatch job.sh`.
 
 An example folder, `example_Na`, is provided with all necessary files.

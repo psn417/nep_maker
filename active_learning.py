@@ -49,7 +49,7 @@ class ActiveLearning:
                 self.input_vasp = yaml.safe_load(f)
         else:
             raise FileNotFoundError(f"Vasp config file {vasp_config_path} not found.")
-        
+
         self.input_nep = (input_path / "nep.in").read_text()
 
         # Load job scripts
@@ -61,6 +61,7 @@ class ActiveLearning:
         self.job_nep = (job_path / "job_nep.sh").read_text()
         self.job_select_active_set = (job_path / "job_select_active_set.sh").read_text()
         self.job_select_structures = (job_path / "job_select_structures.sh").read_text()
+        self.submit_command = (input_path / "submit_command.sh").read_text()
 
     def run(self, max_iterations=100):
         """Run the active learning process."""
@@ -92,16 +93,14 @@ class ActiveLearning:
         self.run_gpumd()
         if os.path.getsize("large_gamma.xyz") == 0:
             return 0
-        
+
         to_add = self.select_structures()
         if len(to_add) > self.max_structures_per_iteration:
             random.seed(42)  # Set random seed for reproducibility
             random.shuffle(to_add)
-            to_add = to_add[
-                : self.max_structures_per_iteration
-            ]
-        ase.io.write(f"{self.path / 'to_add.xyz'}", to_add)        
-        
+            to_add = to_add[: self.max_structures_per_iteration]
+        ase.io.write(f"{self.path / 'to_add.xyz'}", to_add)
+
         return 1
 
     def run_scf(self, iter_num):
@@ -130,7 +129,12 @@ class ActiveLearning:
         os.mkdir("1-scf")
         os.chdir("1-scf")
         tasks = [
-            vasp_task(atoms=atoms, input=self.input_vasp, job_script=self.job_vasp)
+            vasp_task(
+                atoms=atoms,
+                input=self.input_vasp,
+                job_script=self.job_vasp,
+                submit_command=self.submit_command,
+            )
             for atoms in traj
         ]
         pool = Pool(tasks)
@@ -155,7 +159,13 @@ class ActiveLearning:
         os.chdir("2-train")
         self.logger.info("Training now.")
         os.system(f"cp {self.path / 'train.xyz'} .")
-        tasks = [nep_task(input=self.input_nep, job_script=self.job_nep)]
+        tasks = [
+            nep_task(
+                input=self.input_nep,
+                job_script=self.job_nep,
+                submit_command=self.submit_command,
+            )
+        ]
         pool = Pool(tasks)
         pool.run()
         os.system(f"cp nep.txt {self.path}")
@@ -168,7 +178,12 @@ class ActiveLearning:
         os.chdir("3-select_active_set")
         os.system(f"cp {self.path / 'nep.txt'} .")
         os.system(f"cp {self.path / 'train.xyz'} .")
-        tasks = [Task(job_script=self.job_select_active_set)]
+        tasks = [
+            Task(
+                job_script=self.job_select_active_set,
+                submit_command=self.submit_command,
+            )
+        ]
         pool = Pool(tasks)
         pool.run()
         os.system(f"cp active_set.asi {self.path}")
@@ -182,7 +197,12 @@ class ActiveLearning:
         os.system(f"cp {self.path / 'active_set.asi'} .")
         self.logger.info("Running GPUMD now.")
         tasks = [
-            gpumd_task(input=ii, atoms=jj, job_script=self.job_gpumd)
+            gpumd_task(
+                input=ii,
+                atoms=jj,
+                job_script=self.job_gpumd,
+                submit_command=self.submit_command,
+            )
             for ii, jj in zip(self.input_gpumd, self.atoms_gpumd)
         ]
         pool = Pool(tasks)
@@ -198,7 +218,12 @@ class ActiveLearning:
         os.system(f"cp {self.path / 'nep.txt'} .")
         os.system(f"cp {self.path / 'train.xyz'} .")
         os.system("cp ../large_gamma.xyz .")
-        tasks = [Task(job_script=self.job_select_structures)]
+        tasks = [
+            Task(
+                job_script=self.job_select_structures,
+                submit_command=self.submit_command,
+            )
+        ]
         pool = Pool(tasks)
         pool.run()
         ret = ase.io.read("to_add.xyz", index=":")

@@ -14,12 +14,13 @@ class Task:
         self.done = False
         self.job_script = kwargs["job_script"]
         self.input = kwargs.get("input", None)
+        self.submit_command = kwargs["submit_command"]
 
     def submit_job(self):
         job_script_text = self.job_script + "\n touch DONE"
         with open("job.sh", "w") as f:
             f.write(job_script_text)
-        os.system("bsub < job.sh")
+        os.system(self.submit_command)
         self.submitted = True
 
     def prepare_job(self):
