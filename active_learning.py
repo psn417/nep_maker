@@ -89,13 +89,17 @@ class ActiveLearning:
         self.load_inputs()
         self.run_scf(iter_num)
         self.run_nep(iter_num)
-        self.select_active_set()
+        self.select_active_set(iter_num)
         self.run_gpumd()
         if os.path.getsize("large_gamma.xyz") == 0:
             return 0
 
         to_add = self.select_structures()
+        self.logger.info(f"{len(to_add)} structures selected.")
         if len(to_add) > self.max_structures_per_iteration:
+            self.logger.info(
+                f"{self.max_structures_per_iteration} randomly selected structures are used."
+            )
             random.seed(42)  # Set random seed for reproducibility
             random.shuffle(to_add)
             to_add = to_add[: self.max_structures_per_iteration]
@@ -171,8 +175,11 @@ class ActiveLearning:
         os.system(f"cp nep.txt {self.path}")
         os.chdir("..")
 
-    def select_active_set(self):
+    def select_active_set(self, iter_num):
         """Select the active set for training."""
+        if iter_num == 0 and (self.path / "active_set.asi").exists():
+            self.logger.info("'active_set.asi' exists, skip selecting in iter-0.")
+            return
         self.logger.info("Selecting active set.")
         os.mkdir("3-select_active_set")
         os.chdir("3-select_active_set")
