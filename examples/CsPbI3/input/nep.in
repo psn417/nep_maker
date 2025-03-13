@@ -1,0 +1,6 @@
+type           3 Cs Pb I
+version        4
+cutoff         8 4
+neuron         30
+generation     20000
+batch          5000

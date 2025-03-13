@@ -1,7 +1,7 @@
 #!/bin/bash
 #BSUB -J vasp
 #BSUB -n 4
-#BSUB -q 6230r
+#BSUB -q 9242opa!
 #BSUB -e err.txt
 #BSUB -o out.txt
 

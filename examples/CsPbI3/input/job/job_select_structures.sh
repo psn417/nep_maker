@@ -9,5 +9,7 @@
 module purge
 module load gcc/12.1.0 cuda/12.0.0
 
+export OMP_NUM_THREAD=8
+
 source /fs08/home/js_pansn/apps/anaconda3/bin/activate ase
-python /fs08/home/js_pansn/python_packages/nep_maker/nep_active/select_active.py
+python /fs08/home/js_pansn/python_packages/nep_maker/nep_active/select_extend.py

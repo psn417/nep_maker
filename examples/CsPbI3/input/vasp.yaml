@@ -1,0 +1,16 @@
+pp: pbe
+ibrion: -1
+ismear: 0
+isym: 0
+sigma: 0.05
+algo: normal
+ncore: 4
+kspacing: 0.5
+lcharg: False
+lwave: False
+lreal: Auto
+symprec: 0.000001
+setups:  
+  Cs: _sv
+  Pb:
+  Cl:
