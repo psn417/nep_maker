@@ -1,3 +1,3 @@
 [submodule "nep_extrapolation"]
 	path = nep_extrapolation
-	url = git@github.com:psn417/nep_extrapolation.git
+	url = https://github.com/psn417/nep_extrapolation.git
