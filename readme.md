@@ -34,7 +34,7 @@ While the structures from Step 4 have high extrapolation levels, they may lack d
 
 ### Dependencies
 
-First, install the required dependencies, including `PyNEP` and `CuPy`. Refer to [this page](https://github.com/psn417/nep_active) for detailed instructions.
+First, install the required dependencies, including `PyNEP` and `CuPy`. Refer to [this page](https://github.com/psn417/nep_extrapolation) for detailed instructions.
 
 ### Installing the Package
 
