@@ -8,8 +8,10 @@
 
 module purge
 module load gcc/12.1.0 cuda/12.0.0
+module load anaconda/3
+. /fs00/software/anaconda/3/etc/profile.d/conda.sh
+conda activate ase
 
 export OMP_NUM_THREAD=8
 
-source /fs08/home/js_pansn/apps/anaconda3/bin/activate ase
-python /fs08/home/js_pansn/python_packages/nep_maker/nep_extrapolation/select_active.py
+python /fsb/home/jiansun/js_pansn/common/python_packages/nep_maker/nep_extrapolation/select_active.py
