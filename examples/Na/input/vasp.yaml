@@ -4,9 +4,9 @@ ismear: 0
 isym: 0
 sigma: 0.02
 algo: normal
-encut: 101.968
+encut: 125
 ncore: 4
-kspacing: 0.5
+kspacing: 0.314
 lcharg: False
 lwave: False
 lreal: Auto

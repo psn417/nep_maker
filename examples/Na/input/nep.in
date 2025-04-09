@@ -2,5 +2,5 @@ type           1 Na
 version        4
 cutoff         8 4
 neuron         30
-generation     10000
+generation     15000
 batch          5000
